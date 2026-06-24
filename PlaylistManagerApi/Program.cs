@@ -1,3 +1,4 @@
+using PlaylistManagerApi.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+//to add scope for Interface
+builder.Services.AddScoped<ISongService, SongService>();
 
 var app = builder.Build();
 

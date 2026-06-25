@@ -5,7 +5,8 @@ namespace PlaylistManagerApi.Services
 {
     public interface IPlaylistService
     {
-        Task<List<PlaylistRes>> GetAllPlaylistsAsync();
+        //Get all Playlists of a specific User
+        Task<List<PlaylistRes>> GetUserPlaylistsAsync(int UserId);
 
         Task<List<PlaylistRes>> GetPlaylistByNameAsync(String name);
 
@@ -13,9 +14,9 @@ namespace PlaylistManagerApi.Services
 
         Task<PlaylistRes> AddPlaylistAsync(CreatePlaylistReq playlist);
 
-        Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq songandplaylist);
+        Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq request);
 
-        Task<bool> DeletePlaylistAsync(Playlist playlist);
+        Task<bool> DeletePlaylistAsync(int playlistId, int userId);
 
     }
 }

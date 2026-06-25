@@ -37,7 +37,12 @@ namespace PlaylistManagerApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Playlists");
                 });
@@ -54,6 +59,8 @@ namespace PlaylistManagerApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("PlaylistId", "OrderInPlaylist");
+
+                    b.HasIndex("SongId");
 
                     b.ToTable("PlaylistSongs");
                 });
@@ -80,6 +87,59 @@ namespace PlaylistManagerApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Songs");
+                });
+
+            modelBuilder.Entity("PlaylistManagerApi.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("PlaylistManagerApi.Models.Playlist", b =>
+                {
+                    b.HasOne("PlaylistManagerApi.Models.User", "User")
+                        .WithMany("Playlists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PlaylistManagerApi.Models.PlaylistSongs", b =>
+                {
+                    b.HasOne("PlaylistManagerApi.Models.Playlist", null)
+                        .WithMany("PlaylistSongs")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PlaylistManagerApi.Models.Song", null)
+                        .WithMany()
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PlaylistManagerApi.Models.Playlist", b =>
+                {
+                    b.Navigation("PlaylistSongs");
+                });
+
+            modelBuilder.Entity("PlaylistManagerApi.Models.User", b =>
+                {
+                    b.Navigation("Playlists");
                 });
 #pragma warning restore 612, 618
         }

@@ -27,7 +27,7 @@ namespace PlaylistManagerApi.Controllers
             
         }
 
-        [HttpGet("Song_Id/{id}")]
+        [HttpGet("search/id/{id}")]
 
         //Use async to prevent freezing
         public async Task<ActionResult<SongRes>> GetSongById(int id)
@@ -41,7 +41,7 @@ namespace PlaylistManagerApi.Controllers
 
         }
 
-        [HttpGet("Song_Name/{name}")]
+        [HttpGet("search/name/{name}")]
         //to search for all songs with this name
         public async Task<ActionResult<List<SongRes>>> SearchSongName(String name)
         {
@@ -53,7 +53,7 @@ namespace PlaylistManagerApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("Artist_Name/{artist}")]
+        [HttpGet("search/artist/{artist}")]
         //to search for all songs from this artist
         public async Task<ActionResult<List<SongRes>>> SearchArtistName(String artist)
         {

@@ -10,12 +10,12 @@ namespace PlaylistManagerApi.Controllers
     [ApiController]
     public class PlaylistController(IPlaylistService service) : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("search/userId/{id}")]
 
         //Use async to prevent freezing
-        public async Task<ActionResult<List<PlaylistRes>>> GetPlaylists()
+        public async Task<ActionResult<List<PlaylistRes>>> GetPlaylists(int userId)
         {
-            var result = await service.GetAllPlaylistsAsync();
+            var result = await service.GetUserPlaylistsAsync(userId);
             if (result.Count == 0)
             {
                 return NoContent();
@@ -24,7 +24,7 @@ namespace PlaylistManagerApi.Controllers
 
         }
 
-        [HttpGet("Playlist_Id/{id}")]
+        [HttpGet("search/playlistId/{id}")]
 
         //Use async to prevent freezing
         public async Task<ActionResult<SongRes>> GetPlaylistById(int id)
@@ -39,10 +39,11 @@ namespace PlaylistManagerApi.Controllers
         }
 
 
-        [HttpGet("Playlist_Name/{name}")]
+        [HttpGet("search/name/{name}")]
         //to search for all Playlists with this name
         public async Task<ActionResult<List<PlaylistRes>>> SearchPlaylistName(String name)
         {
+            
             var result = await service.GetPlaylistByNameAsync(name);
             if (result.Count == 0)
             {
@@ -54,26 +55,56 @@ namespace PlaylistManagerApi.Controllers
         [HttpPost]
         public async Task<ActionResult<PlaylistRes>> AddPlaylist(CreatePlaylistReq playlist)
         {
-            var createPlaylist = await service.AddPlaylistAsync(playlist);
-            if (createPlaylist == null)
+            try
             {
-                return NoContent();
+                var createPlaylist = await service.AddPlaylistAsync(playlist);
+                if (createPlaylist == null)
+                {
+                    return NoContent();
+                }
+                return CreatedAtAction(nameof(GetPlaylistById), new { id = createPlaylist.Id }, createPlaylist);
             }
-            return CreatedAtAction(nameof(GetPlaylistById), new { id = createPlaylist.Id }, createPlaylist);
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
         }
 
-        [HttpPost("Add_Song_To_Playlist/")]
-        public async Task<ActionResult<PlaylistSongRes>> AddSongToPlaylist(AddSongToPlaylistReq playlist)
+        [HttpPost("addsong/")]
+        public async Task<ActionResult<PlaylistSongRes>> AddSongToPlaylist(AddSongToPlaylistReq request)
         {
-            var createPlaylist = await service.AddSongToPlaylistAsync(playlist);
-            if (createPlaylist == null)
+            try
             {
-                return NoContent();
+                var tempPlaylist = await service.AddSongToPlaylistAsync(request);
+                if (tempPlaylist == null)
+                {
+                    return NoContent();
+                }
+                return CreatedAtAction(nameof(GetPlaylistById), new { id = request.PlaylistId }, tempPlaylist);
             }
-            //return CreatedAtAction(nameof(GetPlaylistById), new { id = createPlaylist.Id }, createPlaylist);
-            return Ok();
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            
         }
+
+        [HttpDelete]
+        public async Task<ActionResult<PlaylistSongRes>> DeletePlaylist(int playlistId, int userId)
+        {
+            bool result = await service.DeletePlaylistAsync(playlistId, userId);
+
+            if (result == false)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+    
 
 
     }

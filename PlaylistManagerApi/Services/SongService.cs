@@ -47,13 +47,13 @@ namespace PlaylistManagerApi.Services
 
         public async Task<List<SongRes>> GetSongByNameAsync(string name)
         {
-            var result = context.Songs.FromSqlRaw("SELECT * From Songs WHERE Name = {0}",name).Select(s => new SongRes { Id = s.Id, Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate }).ToListAsync();
+            var result = context.Songs.Where(s => s.Name.Contains(name)).Select(s => new SongRes { Id = s.Id, Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate }).ToListAsync();
             return await result;
         }
 
         public async Task<List<SongRes>> GetSongsByArtistAsync(string artistName)
         {
-            var result = context.Songs.FromSqlRaw("SELECT * From Songs WHERE Artist = {0}", artistName).Select(s => new SongRes { Id = s.Id, Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate }).ToListAsync();
+            var result = context.Songs.Where(s => s.Artist.Contains(artistName)).Select(s => new SongRes { Id = s.Id, Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate }).ToListAsync();
             return await result;
         }
 

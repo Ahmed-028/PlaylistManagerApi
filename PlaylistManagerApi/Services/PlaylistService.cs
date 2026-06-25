@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using PlaylistManagerApi.Data;
 using PlaylistManagerApi.Dtos;
 using PlaylistManagerApi.Models;
@@ -28,16 +29,47 @@ namespace PlaylistManagerApi.Services
             };
         }
 
-        public async Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq songandplay)
+        public async Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq request)
         {
-            var pid = GetPlaylistByNameAsync(songandplay.PlaylistName).Result.First().Id;
+            //var tempPlaylist = GetPlaylistByIdAsync(request.PlaylistId);
 
-            var sid = context.Songs.FromSqlRaw("SELECT * From Songs WHERE Name = {0}", songandplay.SongName).First().Id;
+            var tempPlaylist = await context.Playlists.Include(p => p.PlaylistSongs).FirstOrDefaultAsync(p => p.Id == request.PlaylistId && p.UserId == request.UserId);
+            if (tempPlaylist == null) 
+            {
+                throw new ArgumentException("Playlist Not Found or it is not yours");
+            }
+
+            var song = await context.Songs.FindAsync(request.SongId);
+
+            if (song == null)
+            {
+                throw new ArgumentException("Song Not Found");
+            }
+
+            if (tempPlaylist.PlaylistSongs.Any(ps => ps.SongId == request.SongId))
+            {
+                throw new InvalidOperationException("Song Already in Playlist");
+            }
+
+            int nextOrder;
+            var last = tempPlaylist.PlaylistSongs.LastOrDefault();
+
+            if (last == null)
+            {
+                nextOrder = 1;
+            }
+            else
+            {
+                nextOrder = last.OrderInPlaylist + 1;
+            }
+            
+
 
             var newPlaylistSongs = new PlaylistSongs
             {
-                PlaylistId = pid,
-                SongId = sid
+                PlaylistId = request.PlaylistId,
+                OrderInPlaylist = nextOrder,
+                SongId = request.SongId
 
             };
 
@@ -47,33 +79,42 @@ namespace PlaylistManagerApi.Services
             return new PlaylistSongRes
             {
                 PlaylistId = newPlaylistSongs.PlaylistId,
-                PlaylistName = songandplay.PlaylistName,
-                SongId = sid,
-                SongName = songandplay.SongName,
-                OrderInPlaylist = newPlaylistSongs.OrderInPlaylist
+                PlaylistName = tempPlaylist.Name,
+                OrderInPlaylist = newPlaylistSongs.OrderInPlaylist,
+                SongName = song.Name,
+                SongId = song.Id,
+                Artist = song.Artist
 
             };
         }
 
-        public Task<bool> DeletePlaylistAsync(Playlist playlist)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task<List<PlaylistRes>> GetAllPlaylistsAsync()
+        public async Task<List<PlaylistRes>> GetUserPlaylistsAsync(int userId)
         {
-            return await context.Playlists.Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate }).ToListAsync();
+            return await context.Playlists.Where(p => p.UserId == userId).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate, UserId = p.UserId }).ToListAsync();
         }
 
         public async Task<PlaylistRes?> GetPlaylistByIdAsync(int Id)
         {
-            return await context.Playlists.Where(p => p.Id == Id).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name,CreationDate = p.CreationDate }).FirstOrDefaultAsync();
+            return await context.Playlists.Where(p => p.Id == Id).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name,CreationDate = p.CreationDate, UserId = p.UserId }).FirstOrDefaultAsync();
         }
 
         public async Task<List<PlaylistRes>> GetPlaylistByNameAsync(string name)
         {
-            var result = context.Playlists.FromSqlRaw("SELECT * From Songs WHERE Name = {0}", name).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate }).ToListAsync();
+            var result = context.Playlists.Where(p => p.Name.Contains(name)).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate, UserId = p.UserId }).ToListAsync();
             return await result;
+        }
+
+        public async Task<bool> DeletePlaylistAsync(int playlistId, int userId)
+        {
+            var tempPlaylist = await context.Playlists.Include(p => p.PlaylistSongs).FirstOrDefaultAsync(p => p.Id == playlistId && p.UserId == userId);
+            if (tempPlaylist == null)
+            {
+                return false;
+            }
+            context.Playlists.Remove(tempPlaylist);
+            await context.SaveChangesAsync();
+            return true;
         }
     }
 }

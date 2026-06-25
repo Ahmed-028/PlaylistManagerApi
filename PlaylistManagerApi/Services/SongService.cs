@@ -33,7 +33,7 @@ namespace PlaylistManagerApi.Services
         public async Task<List<Song>> GetSongByNameAsync(string name)
         {
             List<Song> result = testList.FindAll(s => s.Name.Equals(name));
-            return result;
+            return await Task.FromResult(result);
         }
 
         public async Task<List<Song>> GetSongsByArtistAsync(string artistName)

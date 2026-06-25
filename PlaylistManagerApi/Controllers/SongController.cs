@@ -16,7 +16,13 @@ namespace PlaylistManagerApi.Controllers
         //Use async to prevent freezing
         public async Task<ActionResult<List<Song>>> GetSongs()
         {
-            return Ok(await service.GetAllSongsAsync());
+            List<Song> result = await service.GetAllSongsAsync();
+            if (result.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(result);
+            
         }
 
         [HttpGet("Song_Name/{name}")]
@@ -26,7 +32,7 @@ namespace PlaylistManagerApi.Controllers
             List<Song> result = await service.GetSongByNameAsync(name);
             if (result.Count == 0)
             {
-                return NoContent();
+                return NotFound("No Songs Found Having This Name");
             }
             return Ok(result);
         }
@@ -38,7 +44,7 @@ namespace PlaylistManagerApi.Controllers
             List<Song> result = await service.GetSongsByArtistAsync(artist);
             if (result.Count == 0)
             {
-                return NoContent();
+                return NotFound("No Songs Found by this Artist");
             }
             return Ok(result);
         }

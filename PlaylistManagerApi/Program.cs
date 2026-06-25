@@ -13,8 +13,11 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//to add scope for Interface
+//to add scope for Song Interface
 builder.Services.AddScoped<ISongService, SongService>();
+
+//to add scope for Playlist Interface
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 
 var app = builder.Build();
 

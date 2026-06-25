@@ -35,7 +35,7 @@ namespace PlaylistManagerApi.Controllers
             var result = await service.GetSongByIdAsync(id);
             if (result == null)
             {
-                return NoContent();
+                return NotFound("No Songs Found Having This Id");
             }
             return Ok(result);
 

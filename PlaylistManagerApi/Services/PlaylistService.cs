@@ -11,10 +11,17 @@ namespace PlaylistManagerApi.Services
 
         public async Task<PlaylistRes> AddPlaylistAsync(CreatePlaylistReq playlist)
         {
+            var user = await context.Users.FindAsync(playlist.UserId);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+                
             var newPlaylist = new Playlist
             {
                 Name = playlist.Name,
-                CreationDate = DateTime.Now
+                CreationDate = DateTime.Now,
+                UserId = playlist.UserId
 
             };
 
@@ -25,7 +32,8 @@ namespace PlaylistManagerApi.Services
             {
                 Id = newPlaylist.Id,
                 Name = newPlaylist.Name,
-                CreationDate = newPlaylist.CreationDate
+                CreationDate = newPlaylist.CreationDate,
+                UserId = newPlaylist.UserId
             };
         }
 
@@ -91,7 +99,8 @@ namespace PlaylistManagerApi.Services
 
         public async Task<List<PlaylistRes>> GetUserPlaylistsAsync(int userId)
         {
-            return await context.Playlists.Where(p => p.UserId == userId).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate, UserId = p.UserId }).ToListAsync();
+            var result = context.Playlists.Where(p => p.UserId == userId).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate, UserId = p.UserId }).ToListAsync();
+            return await result;
         }
 
         public async Task<PlaylistRes?> GetPlaylistByIdAsync(int Id)

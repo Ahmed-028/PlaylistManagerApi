@@ -32,7 +32,7 @@ namespace PlaylistManagerApi.Controllers
             var result = await service.GetPlaylistByIdAsync(id);
             if (result == null)
             {
-                return NoContent();
+                return NotFound("No Playlist Found Having This Id");
             }
             return Ok(result);
 
@@ -88,8 +88,12 @@ namespace PlaylistManagerApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
-            
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+
+
         }
 
         [HttpDelete]

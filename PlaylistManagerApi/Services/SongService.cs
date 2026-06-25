@@ -1,21 +1,22 @@
-﻿using PlaylistManagerApi.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PlaylistManagerApi.Data;
+using PlaylistManagerApi.Dtos;
+using PlaylistManagerApi.Models;
 using System.Xml.Linq;
+using static Azure.Core.HttpHeader;
 
 namespace PlaylistManagerApi.Services
 {
-    public class SongService : ISongService
+    public class SongService(AppDbContext context) : ISongService
     {
 
-        //Using this to test functions before connecting database
+        public async Task<Song?> GetSongByIdAsync(int id)
+        {
+            return await context.Songs.Where(s => s.Id == id).FirstOrDefaultAsync();
+        }
 
-        static List<Song> testList = new List<Song> {
-           new Song {Id = 1,Name="Sharks",Artist ="Imagine dragons",PublishDate= DateTime.Now},
-           new Song {Id = 2,Name="Beliver",Artist ="Imagine dragons",PublishDate= DateTime.Now},
-           new Song {Id = 3,Name="Radioactive",Artist ="Imagine dragons",PublishDate= DateTime.Now}
 
-        };
-
-        public Task<Song> AddSongAsync(Song song)
+        public Task<SongRes> AddSongAsync(CreateSongReq song)
         {
             throw new NotImplementedException();
         }
@@ -25,22 +26,25 @@ namespace PlaylistManagerApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<List<Song>> GetAllSongsAsync() 
+        public async Task<List<SongRes>> GetAllSongsAsync() 
         {
-            return await Task.FromResult(testList);
+            return await context.Songs.Select(s => new SongRes { Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate}).ToListAsync();
         }
 
-        public async Task<List<Song>> GetSongByNameAsync(string name)
+        public async Task<List<SongRes>> GetSongByNameAsync(string name)
         {
-            List<Song> result = testList.FindAll(s => s.Name.ToLower().Equals(name.ToLower()));
-            return await Task.FromResult(result);
+            //List<Song> result = testList.FindAll(s => s.Name.ToLower().Equals(name.ToLower()));
+            var result = context.Songs.FromSqlRaw("SELECT * From Songs WHERE Name = {0}",name).Select(s => new SongRes { Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate }).ToListAsync();
+            return await result;
         }
 
-        public async Task<List<Song>> GetSongsByArtistAsync(string artistName)
+        public async Task<List<SongRes>> GetSongsByArtistAsync(string artistName)
         {
             //List<Song> result = testList.FindAll(s => s.Artist.Equals(artistName));
-            List<Song> result = testList.Where(s => s.Artist.ToLower().Equals(artistName.ToLower())).ToList();
-            return await Task.FromResult(result);
+            //List<Song> result = testList.Where(s => s.Artist.ToLower().Equals(artistName.ToLower())).ToList();
+            //return await Task.FromResult(result);
+            var result = context.Songs.FromSqlRaw("SELECT * From Songs WHERE Artist = {0}", artistName).Select(s => new SongRes { Name = s.Name, Artist = s.Artist, PublishDate = s.PublishDate }).ToListAsync();
+            return await result;
         }
 
         public Task<bool> UpdateSongAsync(Song song)

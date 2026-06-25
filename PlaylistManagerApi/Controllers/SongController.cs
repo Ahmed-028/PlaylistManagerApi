@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PlaylistManagerApi.Dtos;
 using PlaylistManagerApi.Models;
 using PlaylistManagerApi.Services;
 
@@ -14,9 +16,9 @@ namespace PlaylistManagerApi.Controllers
         [HttpGet]
 
         //Use async to prevent freezing
-        public async Task<ActionResult<List<Song>>> GetSongs()
+        public async Task<ActionResult<List<SongRes>>> GetSongs()
         {
-            List<Song> result = await service.GetAllSongsAsync();
+            List<SongRes> result = await service.GetAllSongsAsync();
             if (result.Count == 0)
             {
                 return NoContent();
@@ -27,9 +29,9 @@ namespace PlaylistManagerApi.Controllers
 
         [HttpGet("Song_Name/{name}")]
         //to search for all songs with this name
-        public async Task<ActionResult<List<Song>>> SearchSongName(String name)
+        public async Task<ActionResult<List<SongRes>>> SearchSongName(String name)
         {
-            List<Song> result = await service.GetSongByNameAsync(name);
+            List<SongRes> result = await service.GetSongByNameAsync(name);
             if (result.Count == 0)
             {
                 return NotFound("No Songs Found Having This Name");
@@ -39,14 +41,26 @@ namespace PlaylistManagerApi.Controllers
 
         [HttpGet("Artist_Name/{artist}")]
         //to search for all songs from this artist
-        public async Task<ActionResult<List<Song>>> SearchArtistName(String artist)
+        public async Task<ActionResult<List<SongRes>>> SearchArtistName(String artist)
         {
-            List<Song> result = await service.GetSongsByArtistAsync(artist);
+            List<SongRes> result = await service.GetSongsByArtistAsync(artist);
             if (result.Count == 0)
             {
                 return NotFound("No Songs Found by this Artist");
             }
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<SongRes>> AddSong(CreateSongReq song)
+        {
+            var createSong = await service.AddSongAsync(song);
+            if (createSong == null)
+            {
+                return NoContent();
+            }
+            return CreatedAtAction(nameof(service.GetSongByIdAsync),createSong);
+
         }
 
 

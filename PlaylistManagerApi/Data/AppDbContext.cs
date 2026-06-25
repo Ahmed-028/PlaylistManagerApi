@@ -9,5 +9,7 @@ namespace PlaylistManagerApi.Data
 
         public DbSet<Playlist> Playlists => Set<Playlist>();
 
+        public DbSet<PlaylistSongs> PlaylistSongs => Set<PlaylistSongs>();
+
     }
 }

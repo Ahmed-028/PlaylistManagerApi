@@ -1,10 +1,9 @@
 ﻿namespace PlaylistManagerApi.Dtos
 {
-    public class SongRes
+    public class PlaylistRes
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Artist { get; set; } = string.Empty;
-        public DateTime PublishDate { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }

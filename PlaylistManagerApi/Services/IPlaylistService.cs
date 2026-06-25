@@ -1,16 +1,19 @@
-﻿using PlaylistManagerApi.Models;
+﻿using PlaylistManagerApi.Dtos;
+using PlaylistManagerApi.Models;
 
 namespace PlaylistManagerApi.Services
 {
     public interface IPlaylistService
     {
-        Task<List<Playlist>> GetAllPlaylistsAsync();
+        Task<List<PlaylistRes>> GetAllPlaylistsAsync();
 
-        Task<List<Playlist>> GetPlaylistByNameAsync(String name);
+        Task<List<PlaylistRes>> GetPlaylistByNameAsync(String name);
 
-        Task<Playlist> AddPlaylistAsync(Playlist playlist);
+        Task<PlaylistRes?> GetPlaylistByIdAsync(int Id);
 
-        Task<Playlist> AddSongToPlaylistAsync(Song song);
+        Task<PlaylistRes> AddPlaylistAsync(CreatePlaylistReq playlist);
+
+        Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq songandplaylist);
 
         Task<bool> DeletePlaylistAsync(Playlist playlist);
 

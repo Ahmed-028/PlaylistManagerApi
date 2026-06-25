@@ -7,7 +7,7 @@ namespace PlaylistManagerApi.Services
     {
         Task<List<SongRes>> GetAllSongsAsync();
 
-        Task<Song?> GetSongByIdAsync(int id);
+        Task<SongRes?> GetSongByIdAsync(int id);
 
         Task<List<SongRes>> GetSongByNameAsync(String name);
 
@@ -15,8 +15,6 @@ namespace PlaylistManagerApi.Services
 
         Task<SongRes> AddSongAsync(CreateSongReq song);
 
-        Task<bool> UpdateSongAsync(Song song);
 
-        Task<bool> DeleteSongAsync(Song song);
     }
 }

@@ -27,6 +27,20 @@ namespace PlaylistManagerApi.Controllers
             
         }
 
+        [HttpGet("Song_Id/{id}")]
+
+        //Use async to prevent freezing
+        public async Task<ActionResult<SongRes>> GetSongById(int id)
+        {
+            var result = await service.GetSongByIdAsync(id);
+            if (result == null)
+            {
+                return NoContent();
+            }
+            return Ok(result);
+
+        }
+
         [HttpGet("Song_Name/{name}")]
         //to search for all songs with this name
         public async Task<ActionResult<List<SongRes>>> SearchSongName(String name)
@@ -59,9 +73,11 @@ namespace PlaylistManagerApi.Controllers
             {
                 return NoContent();
             }
-            return CreatedAtAction(nameof(service.GetSongByIdAsync),createSong);
+            return CreatedAtAction(nameof(GetSongById), new {id = createSong.Id},createSong);
 
         }
+
+        
 
 
     }

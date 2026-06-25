@@ -8,14 +8,51 @@ namespace PlaylistManagerApi.Services
     public class PlaylistService(AppDbContext context) : IPlaylistService
     {
 
-        public Task<Playlist> AddPlaylistAsync(Playlist playlist)
+        public async Task<PlaylistRes> AddPlaylistAsync(CreatePlaylistReq playlist)
         {
-            throw new NotImplementedException();
+            var newPlaylist = new Playlist
+            {
+                Name = playlist.Name,
+                CreationDate = DateTime.Now
+
+            };
+
+            context.Playlists.Add(newPlaylist);
+            await context.SaveChangesAsync();
+
+            return new PlaylistRes
+            {
+                Id = newPlaylist.Id,
+                Name = newPlaylist.Name,
+                CreationDate = newPlaylist.CreationDate
+            };
         }
 
-        public Task<Playlist> AddSongToPlaylistAsync(Song song)
+        public async Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq songandplay)
         {
-            throw new NotImplementedException();
+            var pid = GetPlaylistByNameAsync(songandplay.PlaylistName).Result.First().Id;
+
+            var sid = context.Songs.FromSqlRaw("SELECT * From Songs WHERE Name = {0}", songandplay.SongName).First().Id;
+
+            var newPlaylistSongs = new PlaylistSongs
+            {
+                PlaylistId = pid,
+                SongId = sid
+
+            };
+
+            context.PlaylistSongs.Add(newPlaylistSongs);
+            await context.SaveChangesAsync();
+
+            return new PlaylistSongRes
+            {
+                PlaylistId = newPlaylistSongs.PlaylistId,
+                PlaylistName = songandplay.PlaylistName,
+                SongId = sid,
+                SongName = songandplay.SongName,
+                OrderInPlaylist = newPlaylistSongs.OrderInPlaylist
+
+            };
         }
 
         public Task<bool> DeletePlaylistAsync(Playlist playlist)
@@ -23,14 +60,19 @@ namespace PlaylistManagerApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<List<Playlist>> GetAllPlaylistsAsync()
+        public async Task<List<PlaylistRes>> GetAllPlaylistsAsync()
         {
-            return await context.Playlists.ToListAsync();
+            return await context.Playlists.Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate }).ToListAsync();
         }
 
-        public async Task<List<Playlist>> GetPlaylistByNameAsync(string name)
+        public async Task<PlaylistRes?> GetPlaylistByIdAsync(int Id)
         {
-            var result = context.Playlists.FromSqlRaw("SELECT * From Songs WHERE Name = {0}", name).ToListAsync();
+            return await context.Playlists.Where(p => p.Id == Id).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name,CreationDate = p.CreationDate }).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<PlaylistRes>> GetPlaylistByNameAsync(string name)
+        {
+            var result = context.Playlists.FromSqlRaw("SELECT * From Songs WHERE Name = {0}", name).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate }).ToListAsync();
             return await result;
         }
     }

@@ -26,14 +26,14 @@ namespace PlaylistManagerApi.Data
 
             // PlaylistSongs -> Playlist relationship
             modelBuilder.Entity<PlaylistSongs>()
-                .HasOne<Playlist>()
+                .HasOne<Playlist>(ps => ps.Playlist)
                 .WithMany(p => p.PlaylistSongs)
                 .HasForeignKey(ps => ps.PlaylistId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // PlaylistSongs -> Song relationship
             modelBuilder.Entity<PlaylistSongs>()
-                .HasOne<Song>()
+                .HasOne<Song>(ps => ps.Song)
                 .WithMany()
                 .HasForeignKey(ps => ps.SongId)
                 .OnDelete(DeleteBehavior.Cascade);

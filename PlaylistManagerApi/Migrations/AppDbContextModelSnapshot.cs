@@ -52,13 +52,13 @@ namespace PlaylistManagerApi.Migrations
                     b.Property<int>("PlaylistId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderInPlaylist")
-                        .HasColumnType("int");
-
                     b.Property<int>("SongId")
                         .HasColumnType("int");
 
-                    b.HasKey("PlaylistId", "OrderInPlaylist");
+                    b.Property<int>("OrderInPlaylist")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlaylistId", "SongId");
 
                     b.HasIndex("SongId");
 
@@ -119,17 +119,21 @@ namespace PlaylistManagerApi.Migrations
 
             modelBuilder.Entity("PlaylistManagerApi.Models.PlaylistSongs", b =>
                 {
-                    b.HasOne("PlaylistManagerApi.Models.Playlist", null)
+                    b.HasOne("PlaylistManagerApi.Models.Playlist", "Playlist")
                         .WithMany("PlaylistSongs")
                         .HasForeignKey("PlaylistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlaylistManagerApi.Models.Song", null)
+                    b.HasOne("PlaylistManagerApi.Models.Song", "Song")
                         .WithMany()
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Song");
                 });
 
             modelBuilder.Entity("PlaylistManagerApi.Models.Playlist", b =>

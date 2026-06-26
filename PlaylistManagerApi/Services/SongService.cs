@@ -2,8 +2,7 @@
 using PlaylistManagerApi.Data;
 using PlaylistManagerApi.Dtos;
 using PlaylistManagerApi.Models;
-using System.Xml.Linq;
-using static Azure.Core.HttpHeader;
+
 
 namespace PlaylistManagerApi.Services
 {

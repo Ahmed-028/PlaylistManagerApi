@@ -65,12 +65,12 @@ namespace PlaylistManagerApi.Migrations
                 columns: table => new
                 {
                     PlaylistId = table.Column<int>(type: "int", nullable: false),
-                    OrderInPlaylist = table.Column<int>(type: "int", nullable: false),
-                    SongId = table.Column<int>(type: "int", nullable: false)
+                    SongId = table.Column<int>(type: "int", nullable: false),
+                    OrderInPlaylist = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlaylistSongs", x => new { x.PlaylistId, x.OrderInPlaylist });
+                    table.PrimaryKey("PK_PlaylistSongs", x => new { x.PlaylistId, x.SongId });
                     table.ForeignKey(
                         name: "FK_PlaylistSongs_Playlists_PlaylistId",
                         column: x => x.PlaylistId,

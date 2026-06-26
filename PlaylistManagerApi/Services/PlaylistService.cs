@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PlaylistManagerApi.Data;
 using PlaylistManagerApi.Dtos;
 using PlaylistManagerApi.Models;
@@ -60,15 +59,14 @@ namespace PlaylistManagerApi.Services
             }
 
             int nextOrder;
-            var last = tempPlaylist.PlaylistSongs.LastOrDefault();
 
-            if (last == null)
+            if (tempPlaylist.PlaylistSongs.Count == 0)
             {
                 nextOrder = 1;
             }
             else
             {
-                nextOrder = last.OrderInPlaylist + 1;
+                nextOrder = tempPlaylist.PlaylistSongs.Max(ps => ps.OrderInPlaylist) + 1;
             }
             
 
@@ -82,7 +80,15 @@ namespace PlaylistManagerApi.Services
             };
 
             context.PlaylistSongs.Add(newPlaylistSongs);
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                throw new InvalidOperationException("Song Already in Playlist");
+            }
+            
 
             return new PlaylistSongRes
             {

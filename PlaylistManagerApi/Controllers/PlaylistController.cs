@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PlaylistManagerApi.Dtos;
-using PlaylistManagerApi.Models;
 using PlaylistManagerApi.Services;
 
 namespace PlaylistManagerApi.Controllers
@@ -10,7 +8,7 @@ namespace PlaylistManagerApi.Controllers
     [ApiController]
     public class PlaylistController(IPlaylistService service) : ControllerBase
     {
-        [HttpGet("search/userId/{id}")]
+        [HttpGet("search/userId/{userId}")]
 
         //Use async to prevent freezing
         public async Task<ActionResult<List<PlaylistRes>>> GetPlaylists(int userId)
@@ -27,7 +25,7 @@ namespace PlaylistManagerApi.Controllers
         [HttpGet("search/playlistId/{id}")]
 
         //Use async to prevent freezing
-        public async Task<ActionResult<SongRes>> GetPlaylistById(int id)
+        public async Task<ActionResult<PlaylistRes>> GetPlaylistById(int id)
         {
             var result = await service.GetPlaylistByIdAsync(id);
             if (result == null)

@@ -1,6 +1,86 @@
 @PlaylistManagerApi_HostAddress = http://localhost:5239
 
-GET {{PlaylistManagerApi_HostAddress}}/weatherforecast/
+
+//Searching For Playlists By User Id
+GET {{PlaylistManagerApi_HostAddress}}/api/Playlist/search/userId/1
 Accept: application/json
+
+###
+
+//Searching For Playlists By Playlist Id
+GET {{PlaylistManagerApi_HostAddress}}/api/playlist/search/playlistId/1
+Accept: application/json
+
+###
+
+//Searching For Playlists By Name
+GET {{PlaylistManagerApi_HostAddress}}/api/playlist/search/name/Favorites
+Accept: application/json
+
+###
+
+//Adding a new song to your Playlist
+POST {{PlaylistManagerApi_HostAddress}}/api/playlist/addsong
+Content-Type: application/json
+
+{
+  "playlistId": 1,
+  "songId": 4,
+  "userId": 1
+}
+
+###
+
+//Adding a new Playlist
+POST {{PlaylistManagerApi_HostAddress}}/api/playlist
+Content-Type: application/json
+
+{
+  "name": "My Road Trip",
+  "userId": 1
+}
+
+###
+
+
+//Attempting to Delete a Playlist that doesn't belong to you
+DELETE {{PlaylistManagerApi_HostAddress}}/api/playlist/delete/playlist=3/user=1 
+Accept: application/json
+
+###
+
+
+//Getting All Available Songs
+GET {{PlaylistManagerApi_HostAddress}}/api/song
+Accept: application/json
+
+###
+
+//Searching For Songs By Id
+GET {{PlaylistManagerApi_HostAddress}}/api/song/1
+Accept: application/json
+
+###
+
+//Searching For Songs By Name
+GET {{PlaylistManagerApi_HostAddress}}/api/song/name/Imagine
+Accept: application/json
+
+###
+
+//Searching For Songs By Artist
+GET {{PlaylistManagerApi_HostAddress}}/api/song/artist/Queen
+Accept: application/json
+
+###
+
+//Adding a new song
+POST {{PlaylistManagerApi_HostAddress}}/api/song
+Content-Type: application/json
+
+{
+  "name": "Yesterday",
+  "artist": "The Beatles"
+}
 
 ###

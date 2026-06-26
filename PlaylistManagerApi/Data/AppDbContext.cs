@@ -7,9 +7,7 @@ namespace PlaylistManagerApi.Data
     {
         public DbSet<User> Users => Set<User>();
         public DbSet<Song> Songs => Set<Song>();
-
         public DbSet<Playlist> Playlists => Set<Playlist>();
-
         public DbSet<PlaylistSongs> PlaylistSongs => Set<PlaylistSongs>();
 
         //Add Creation Overriding to form Relationships

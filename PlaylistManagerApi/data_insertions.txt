@@ -1,0 +1,44 @@
+--Seeding data for all tables
+
+-- Clean up existing data (order matters: child tables first)
+DELETE FROM PlaylistSongs;
+DELETE FROM Playlists;
+DELETE FROM Songs;
+DELETE FROM Users;
+
+-- Reset identity seeds (so next insert starts at 1)
+DBCC CHECKIDENT ('Users', RESEED, 0);
+DBCC CHECKIDENT ('Songs', RESEED, 0);
+DBCC CHECKIDENT ('Playlists', RESEED, 0);
+
+-- 1. Insert users with explicit IDs
+SET IDENTITY_INSERT Users ON;
+INSERT INTO Users (Id, Name) VALUES (1, 'Alice');
+INSERT INTO Users (Id, Name) VALUES (2, 'Bob');
+SET IDENTITY_INSERT Users OFF;
+
+-- 2. Insert songs with explicit IDs
+SET IDENTITY_INSERT Songs ON;
+INSERT INTO Songs (Id, Name, Artist, PublishDate) VALUES 
+  (1, 'Bohemian Rhapsody', 'Queen', '1975-10-31'),
+  (2, 'Imagine', 'John Lennon', '1971-10-11'),
+  (3, 'Shape of You', 'Ed Sheeran', '2017-01-06'),
+  (4, 'Billie Jean', 'Michael Jackson', '1983-01-02'),
+  (5, 'Hotel California', 'Eagles', '1977-02-22');
+SET IDENTITY_INSERT Songs OFF;
+
+-- 3. Insert playlists with explicit IDs
+SET IDENTITY_INSERT Playlists ON;
+INSERT INTO Playlists (Id, Name, CreationDate, UserId) VALUES 
+  (1, 'Favorites', GETDATE(), 1),
+  (2, 'Chill Hits', GETDATE(), 1),
+  (3, 'Workout Mix', GETDATE(), 2);
+SET IDENTITY_INSERT Playlists OFF;
+
+-- 4. Insert playlist‑song associations (no identity column)
+INSERT INTO PlaylistSongs (PlaylistId, SongId, OrderInPlaylist) VALUES 
+  (1, 1, 1),   -- Favorites: Bohemian Rhapsody
+  (1, 2, 2),   -- Favorites: Imagine
+  (1, 5, 3),   -- Favorites: Hotel California
+  (3, 3, 1),   -- Workout Mix: Shape of You
+  (3, 4, 2);   -- Workout Mix: Billie Jean

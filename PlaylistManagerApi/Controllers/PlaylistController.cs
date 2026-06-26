@@ -94,14 +94,14 @@ namespace PlaylistManagerApi.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("delete/playlist={playlistId}/user={userId}")]
         public async Task<ActionResult<PlaylistSongRes>> DeletePlaylist(int playlistId, int userId)
         {
             bool result = await service.DeletePlaylistAsync(playlistId, userId);
 
             if (result == false)
             {
-                return NotFound();
+                return NotFound("The Playlist doesn't Exist Or this is not the Right Owner of It");
             }
 
             return NoContent();

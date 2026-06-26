@@ -35,6 +35,19 @@ namespace PlaylistManagerApi.Data
                 .WithMany()
                 .HasForeignKey(ps => ps.SongId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Reasonable column constraints for a relational schema.
+            modelBuilder.Entity<User>()
+                .Property(u => u.Name).HasMaxLength(200).IsRequired();
+
+            modelBuilder.Entity<Playlist>()
+                .Property(p => p.Name).HasMaxLength(200).IsRequired();
+
+            modelBuilder.Entity<Song>(e =>
+            {
+                e.Property(s => s.Name).HasMaxLength(200).IsRequired();
+                e.Property(s => s.Artist).HasMaxLength(200).IsRequired();
+            });
         }
 
     }

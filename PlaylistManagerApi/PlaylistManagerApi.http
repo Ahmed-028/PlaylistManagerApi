@@ -57,19 +57,19 @@ Accept: application/json
 ###
 
 //Searching For Songs By Id
-GET {{PlaylistManagerApi_HostAddress}}/api/song/1
+GET {{PlaylistManagerApi_HostAddress}}/api/song/search/id/1
 Accept: application/json
 
 ###
 
 //Searching For Songs By Name
-GET {{PlaylistManagerApi_HostAddress}}/api/song/name/Imagine
+GET {{PlaylistManagerApi_HostAddress}}/api/song/search/name/Imagine
 Accept: application/json
 
 ###
 
 //Searching For Songs By Artist
-GET {{PlaylistManagerApi_HostAddress}}/api/song/artist/Queen
+GET {{PlaylistManagerApi_HostAddress}}/api/song/search/artist/Queen
 Accept: application/json
 
 ###

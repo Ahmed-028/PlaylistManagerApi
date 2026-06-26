@@ -12,7 +12,7 @@ using PlaylistManagerApi.Data;
 namespace PlaylistManagerApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260625202351_Initial")]
+    [Migration("20260626113305_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -38,7 +38,8 @@ namespace PlaylistManagerApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -78,11 +79,13 @@ namespace PlaylistManagerApi.Migrations
 
                     b.Property<string>("Artist")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime2");
@@ -102,7 +105,8 @@ namespace PlaylistManagerApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 

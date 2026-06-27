@@ -94,7 +94,7 @@ namespace PlaylistManagerApi.Controllers
 
         }
 
-        [HttpDelete("delete/playlist={playlistId}/user={userId}")]
+        [HttpDelete("delete/user={userId}/playlist={playlistId}")]
         public async Task<ActionResult<PlaylistSongRes>> DeletePlaylist(int playlistId, int userId)
         {
             bool result = await service.DeletePlaylistAsync(playlistId, userId);
@@ -106,7 +106,21 @@ namespace PlaylistManagerApi.Controllers
 
             return NoContent();
         }
-    
+
+
+        [HttpPut("update/")]
+        public async Task<ActionResult<PlaylistSongRes>> UpdatePlaylist(UpdatePlaylistReq request)
+        {
+            bool result = await service.UpdatePlaylistAsync(request);
+
+            if (result == false)
+            {
+                return NotFound("The Playlist doesn't Exist Or this is not the Right Owner of It");
+            }
+
+            return Ok("Name was updated to "+ request.Name);
+        }
+
 
 
     }

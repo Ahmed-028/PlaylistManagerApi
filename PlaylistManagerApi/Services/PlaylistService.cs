@@ -131,5 +131,19 @@ namespace PlaylistManagerApi.Services
             await context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> UpdatePlaylistAsync(UpdatePlaylistReq request)
+        {
+            var tempPlaylist = await context.Playlists.Include(p => p.PlaylistSongs).FirstOrDefaultAsync(p => p.Id == request.PlaylistId && p.UserId == request.UserId);
+            if (tempPlaylist == null)
+            {
+                return false;
+            }
+
+            tempPlaylist.Name = request.Name;
+
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -18,5 +18,7 @@ namespace PlaylistManagerApi.Services
 
         Task<bool> DeletePlaylistAsync(int playlistId, int userId);
 
+        Task<bool> UpdatePlaylistAsync(UpdatePlaylistReq request);
+
     }
 }

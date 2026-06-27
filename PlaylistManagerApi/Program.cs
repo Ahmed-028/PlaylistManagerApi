@@ -19,6 +19,9 @@ builder.Services.AddScoped<ISongService, SongService>();
 //to add scope for Playlist Interface
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 
+//to add scope for User Interface
+builder.Services.AddScoped<IUserService, UserService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

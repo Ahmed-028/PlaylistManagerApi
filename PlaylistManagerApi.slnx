@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="PlaylistManagerApi.Tests/PlaylistManagerApi.Tests.csproj" Id="3b5e3505-8cf7-4812-806a-f772665e5b45" />
   <Project Path="PlaylistManagerApi/PlaylistManagerApi.csproj" />
 </Solution>

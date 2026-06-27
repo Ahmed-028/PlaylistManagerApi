@@ -44,11 +44,17 @@ Content-Type: application/json
 
 
 //Attempting to Delete a Playlist that doesn't belong to you
-DELETE {{PlaylistManagerApi_HostAddress}}/api/playlist/delete/playlist=3/user=1 
+DELETE {{PlaylistManagerApi_HostAddress}}delete/user=1/playlist=3 
 Accept: application/json
 
 ###
 
+
+//Attempting to Delete a Playlist that belong's to you
+DELETE {{PlaylistManagerApi_HostAddress}}delete/user=1/playlist=1 
+Accept: application/json
+
+###
 
 //Getting All Available Songs
 GET {{PlaylistManagerApi_HostAddress}}/api/song

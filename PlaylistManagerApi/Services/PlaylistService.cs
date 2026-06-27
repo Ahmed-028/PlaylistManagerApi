@@ -19,7 +19,7 @@ namespace PlaylistManagerApi.Services
             var newPlaylist = new Playlist
             {
                 Name = playlist.Name,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.UtcNow,
                 UserId = playlist.UserId
 
             };

@@ -14,10 +14,7 @@ namespace PlaylistManagerApi.Controllers
         public async Task<ActionResult<List<PlaylistRes>>> GetPlaylists(int userId)
         {
             var result = await service.GetUserPlaylistsAsync(userId);
-            if (result.Count == 0)
-            {
-                return NoContent();
-            }
+
             return Ok(result);
 
         }

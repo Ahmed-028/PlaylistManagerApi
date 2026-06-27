@@ -21,7 +21,7 @@ namespace PlaylistManagerApi.Services
             {
                 Name = song.Name,
                 Artist = song.Artist,
-                PublishDate = DateTime.Now
+                PublishDate = DateTime.UtcNow
 
             };
 

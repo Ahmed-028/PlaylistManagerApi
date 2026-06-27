@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PlaylistManagerApi.Data;
 using PlaylistManagerApi.Dtos;
+using PlaylistManagerApi.Models;
 using PlaylistManagerApi.Services;
 
 
@@ -33,23 +34,35 @@ namespace PlaylistManagerApi.Tests.ServiceTests
 
 
 
+
+
         [Fact]
-        public async Task UserService_GetUserByNameAsync_ReturnUserRes()
+        public async Task AddUserAsync_WithValidUser_CreatesAndReturnsUserRes()
         {
-            //Arrange
-            var name = "Ahmed";
-            var dbContext  = await GetDbContext();
-            var userService = new UserService(dbContext);
+            await using var ctx = await GetDbContext();
+            var service = new UserService(ctx);
 
-            //Act
-            var result = userService.GetUserByNameAsync(name);
+            var result = await service.AddUserAsync(new AddUserReq { Name = "Mohammed" });
 
-            //Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<Task<List<UserRes>>>();
-
-
+            result.Name.Should().Be("Mohammed");
+            result.Id.Should().Be(2);
+            result.Id.Should().BeGreaterThan(0);
         }
+
+
+        [Fact]
+        public async Task GetUserByNameAsync_MatchesSubstringCaseSensitively()
+        {
+            await using var ctx = await GetDbContext();
+            var service = new UserService(ctx);
+
+            var found = await service.GetUserByNameAsync("Ahm");
+
+            found.Should().ContainSingle().Which.Name.Should().Be("Ahmed");
+        }
+
+        
 
 
     }

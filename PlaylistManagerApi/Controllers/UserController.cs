@@ -50,7 +50,7 @@ namespace PlaylistManagerApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<UserRes>> AddSong(AddUserReq user)
+        public async Task<ActionResult<UserRes>> AddUser(AddUserReq user)
         {
             var createUser = await service.AddUserAsync(user);
             if (createUser == null)

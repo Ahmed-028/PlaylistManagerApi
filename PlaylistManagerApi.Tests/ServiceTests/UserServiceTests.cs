@@ -34,7 +34,7 @@ namespace PlaylistManagerApi.Tests.ServiceTests
 
 
         [Fact]
-        public async Task UserService_AddUserAsync_ReturnUserRes()
+        public async Task UserService_GetUserByNameAsync_ReturnUserRes()
         {
             //Arrange
             var name = "Ahmed";

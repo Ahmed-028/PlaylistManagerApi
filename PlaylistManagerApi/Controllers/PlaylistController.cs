@@ -34,6 +34,18 @@ namespace PlaylistManagerApi.Controllers
         }
 
 
+        [HttpGet("search/playlistId/{id}/songs")]
+        //to get the songs of a Playlist in order
+        public async Task<ActionResult<List<PlaylistSongRes>>> GetPlaylistSongs(int id)
+        {
+            var result = await service.GetPlaylistSongsAsync(id);
+            if (result == null)
+            {
+                return NotFound("No Playlist Found Having This Id");
+            }
+            return Ok(result);
+        }
+
         [HttpGet("search/name/{name}")]
         //to search for all Playlists with this name
         public async Task<ActionResult<List<PlaylistRes>>> SearchPlaylistName(String name)

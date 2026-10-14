@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+  Design tokens. One neutral family (cool zinc), one accent (signal orange).
+  Radius system: covers and panels 12px, inputs 10px, buttons and chips fully round.
+*/
+:root {
+  --bg: oklch(0.972 0.002 90);
+  --surface: oklch(0.992 0.001 90);
+  --surface-2: oklch(0.945 0.003 90);
+  --surface-3: oklch(0.915 0.004 90);
+  --line: oklch(0.885 0.004 90);
+  --text: oklch(0.205 0.006 275);
+  --muted: oklch(0.47 0.01 275);
+  --faint: oklch(0.6 0.008 275);
+  --accent: oklch(0.7 0.17 45);
+  --accent-ink: oklch(0.2 0.04 40);
+  --accent-text: oklch(0.54 0.17 40);
+  --accent-soft: oklch(0.7 0.17 45 / 0.14);
+  --danger: oklch(0.55 0.2 25);
+  --danger-soft: oklch(0.55 0.2 25 / 0.1);
+  --danger-ink: oklch(0.985 0.002 90);
+  --shadow: 0 1px 2px oklch(0.3 0.01 275 / 0.06), 0 8px 24px -8px oklch(0.3 0.01 275 / 0.14);
+  --backdrop: oklch(0.2 0.01 275 / 0.4);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: oklch(0.16 0.004 275);
+  --surface: oklch(0.195 0.005 275);
+  --surface-2: oklch(0.235 0.006 275);
+  --surface-3: oklch(0.275 0.007 275);
+  --line: oklch(0.29 0.006 275);
+  --text: oklch(0.955 0.003 90);
+  --muted: oklch(0.71 0.008 275);
+  --faint: oklch(0.56 0.008 275);
+  --accent: oklch(0.74 0.16 50);
+  --accent-ink: oklch(0.2 0.04 40);
+  --accent-text: oklch(0.79 0.14 55);
+  --accent-soft: oklch(0.74 0.16 50 / 0.14);
+  --danger: oklch(0.7 0.17 25);
+  --danger-soft: oklch(0.7 0.17 25 / 0.12);
+  --danger-ink: oklch(0.18 0.03 25);
+  --shadow: 0 1px 2px oklch(0 0 0 / 0.3), 0 12px 32px -12px oklch(0 0 0 / 0.6);
+  --backdrop: oklch(0.08 0.005 275 / 0.6);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-ink: var(--danger-ink);
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --shadow-panel: var(--shadow);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    /* Keep focused elements clear of the sticky mobile header and tab bar. */
+    scroll-padding-top: 4.5rem;
+    scroll-padding-bottom: 6rem;
+  }
+
+  @media (pointer: fine) {
+    html {
+      overscroll-behavior: none;
+    }
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Inputs at 16px on touch screens so iOS never zooms the page on focus. */
+  @media (pointer: coarse) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+}
+
+/* Tactile press feedback for anything pressable. Fast, transform only. */
+@utility pressable {
+  transition-property: transform, background-color, color, border-color, opacity;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out-strong);
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+/* Native <dialog> with an enter/exit transition. Centered, so scale from center. */
+dialog.sheet {
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+  transition:
+    opacity 180ms var(--ease-out-strong),
+    transform 220ms var(--ease-out-strong),
+    overlay 220ms allow-discrete,
+    display 220ms allow-discrete;
+}
+
+dialog.sheet[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+dialog.sheet::backdrop {
+  background: var(--backdrop);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition:
+    opacity 200ms ease,
+    overlay 200ms allow-discrete,
+    display 200ms allow-discrete;
+}
+
+dialog.sheet[open]::backdrop {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* Skeleton shimmer, matched to final layout shapes. */
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--surface-2) 30%,
+    var(--surface-3) 50%,
+    var(--surface-2) 70%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Generated cover art: soft light falloff over the gradient. */
+.cover-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 80% at 0% 0%, oklch(1 0 0 / 0.18), transparent 50%),
+    linear-gradient(to top, oklch(0 0 0 / 0.35), transparent 55%);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.08);
+  pointer-events: none;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+
+  dialog.sheet,
+  dialog.sheet[open] {
+    transform: none;
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
+}

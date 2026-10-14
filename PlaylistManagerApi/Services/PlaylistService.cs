@@ -114,6 +114,29 @@ namespace PlaylistManagerApi.Services
             return await context.Playlists.Where(p => p.Id == Id).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name,CreationDate = p.CreationDate, UserId = p.UserId }).FirstOrDefaultAsync();
         }
 
+        public async Task<List<PlaylistSongRes>?> GetPlaylistSongsAsync(int playlistId)
+        {
+            var playlist = await context.Playlists.FindAsync(playlistId);
+            if (playlist == null)
+            {
+                return null;
+            }
+
+            return await context.PlaylistSongs
+                .Where(ps => ps.PlaylistId == playlistId)
+                .OrderBy(ps => ps.OrderInPlaylist)
+                .Select(ps => new PlaylistSongRes
+                {
+                    PlaylistId = ps.PlaylistId,
+                    PlaylistName = playlist.Name,
+                    SongId = ps.SongId,
+                    SongName = ps.Song!.Name,
+                    Artist = ps.Song!.Artist,
+                    OrderInPlaylist = ps.OrderInPlaylist
+                })
+                .ToListAsync();
+        }
+
         public async Task<List<PlaylistRes>> GetPlaylistByNameAsync(string name)
         {
             var result = context.Playlists.Where(p => p.Name.Contains(name)).Select(p => new PlaylistRes { Id = p.Id, Name = p.Name, CreationDate = p.CreationDate, UserId = p.UserId }).ToListAsync();

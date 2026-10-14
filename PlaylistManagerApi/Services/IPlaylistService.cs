@@ -12,6 +12,9 @@ namespace PlaylistManagerApi.Services
 
         Task<PlaylistRes?> GetPlaylistByIdAsync(int Id);
 
+        //Get the songs of a Playlist in order (null if the Playlist doesn't exist)
+        Task<List<PlaylistSongRes>?> GetPlaylistSongsAsync(int playlistId);
+
         Task<PlaylistRes> AddPlaylistAsync(CreatePlaylistReq playlist);
 
         Task<PlaylistSongRes> AddSongToPlaylistAsync(AddSongToPlaylistReq request);

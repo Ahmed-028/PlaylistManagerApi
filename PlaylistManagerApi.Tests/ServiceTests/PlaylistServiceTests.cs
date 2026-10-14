@@ -214,6 +214,34 @@ namespace PlaylistManagerApi.Tests.ServiceTests
 
             found.Should().ContainSingle().Which.Name.Should().Be("Favourites");
         }
+
+        [Fact]
+        public async Task GetPlaylistSongsAsync_ReturnsSongsInOrder()
+        {
+            await using var ctx = await GetDbContext();
+            var service = new PlaylistService(ctx);
+            await service.AddSongToPlaylistAsync(new AddSongToPlaylistReq { PlaylistId = 1, SongId = 2, UserId = 1 });
+            await service.AddSongToPlaylistAsync(new AddSongToPlaylistReq { PlaylistId = 1, SongId = 1, UserId = 1 });
+
+            var result = await service.GetPlaylistSongsAsync(1);
+
+            result.Should().NotBeNull();
+            result!.Select(s => s.SongName).Should().Equal("Yesterday", "Imagine");
+            result.Select(s => s.OrderInPlaylist).Should().Equal(1, 2);
+            result[0].Artist.Should().Be("The Beatles");
+            result[0].PlaylistName.Should().Be("Favourites");
+        }
+
+        [Fact]
+        public async Task GetPlaylistSongsAsync_WithUnknownPlaylist_ReturnsNull()
+        {
+            await using var ctx = await GetDbContext();
+            var service = new PlaylistService(ctx);
+
+            var result = await service.GetPlaylistSongsAsync(999);
+
+            result.Should().BeNull();
+        }
     
 
 }

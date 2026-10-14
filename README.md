@@ -128,6 +128,7 @@ Base path: `/api`
 | `POST` | `/api/playlist/addsong` | Add a song to a playlist. |
 | `GET` | `/api/playlist/search/userId/{userId}` | Get all playlists for a user. |
 | `GET` | `/api/playlist/search/playlistId/{id}` | Get a single playlist by id. |
+| `GET` | `/api/playlist/search/playlistId/{id}/songs` | Get a playlist's songs in order (`404` if the playlist does not exist). |
 | `GET` | `/api/playlist/search/name/{name}` | Search playlists by name. |
 | `PUT` | `/api/playlist/update` | Rename a playlist (owner-checked). |
 | `DELETE` | `/api/playlist?playlistId={id}&userId={id}` | Delete a playlist (cascades to its songs). |
@@ -192,6 +193,10 @@ dotnet run --project PlaylistManagerApi
 In development, open the interactive docs at `https://localhost:7230/scalar`. You can also exercise every endpoint with the included `PlaylistManagerApi.http` file. Default ports are `7230` (HTTPS) and `5239` (HTTP); confirm against the console output.
 
 On first HTTPS run, trust the dev certificate once: `dotnet dev-certs https --trust` (CLI) or accept the Visual Studio prompt.
+
+### Web front end
+
+A React client lives in [`PlaylistManagerWeb/`](PlaylistManagerWeb/README.md). With the API running on the `http` profile, run `npm install` and `npm run dev` in that folder and open `http://localhost:5173`.
 
 ## Running Migrations
 

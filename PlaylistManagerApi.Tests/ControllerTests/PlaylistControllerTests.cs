@@ -43,6 +43,30 @@ namespace PlaylistManagerApi.Tests.ControllerTests
         }
 
         [Fact]
+        public async Task GetPlaylistSongs_ReturnsOkWithPayload()
+        {
+            var data = new List<PlaylistSongRes> { new() { PlaylistId = 1, SongId = 3, SongName = "Imagine", OrderInPlaylist = 1 } };
+            A.CallTo(() => _playlistService.GetPlaylistSongsAsync(1)).Returns(data);
+            var controller = new PlaylistController(_playlistService);
+
+            var result = await controller.GetPlaylistSongs(1);
+
+            var ok = result.Result.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(data);
+        }
+
+        [Fact]
+        public async Task GetPlaylistSongs_WhenPlaylistMissing_ReturnsNotFound()
+        {
+            A.CallTo(() => _playlistService.GetPlaylistSongsAsync(99)).Returns((List<PlaylistSongRes>?)null);
+            var controller = new PlaylistController(_playlistService);
+
+            var result = await controller.GetPlaylistSongs(99);
+
+            result.Result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        [Fact]
         public async Task GetPlaylistById_WhenMissing_ReturnsNotFound()
         {
             A.CallTo(() => _playlistService.GetPlaylistByIdAsync(99)).Returns((PlaylistRes?)null);
